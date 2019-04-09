@@ -17,6 +17,7 @@ public class TransportLayer implements Runnable{
     private BlockingQueue<Message> low2high;
     private BlockingQueue<Message> high2low;
     public Message s;
+    public Message ss= new Message();
     public String from;
     public TransportLayer() {
     }
@@ -101,15 +102,17 @@ public class TransportLayer implements Runnable{
                         //
                        //   System.out.println("MAC");
                     }
-                    synchronized (high2low){ try {
+                    if(!(ss.getInfo()==message.getInfo()&&ss.getFrom()==message.getFrom()&&ss.getTo()==message.getTo())){
+                     try {
                        // System.out.println("MAC");
                         //System.out.println(message.getTo());
-
+                         System.out.println("Transport");
                         queue.put(message);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }}
 
+                    ss=  message;
                 }
             }
 

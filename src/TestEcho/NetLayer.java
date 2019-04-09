@@ -1,6 +1,7 @@
 package TestEcho;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -17,6 +18,7 @@ public class NetLayer implements Runnable{
     private BlockingQueue<Message> queue;
     public Message s;
     public String from;
+    private LinkedBlockingDeque<Message> cache;
     public NetLayer() {
     }
 
@@ -46,6 +48,14 @@ public class NetLayer implements Runnable{
 
     public void setQueue(BlockingQueue<Message> queue) {
         this.queue = queue;
+    }
+
+    public LinkedBlockingDeque<Message> getCache() {
+        return cache;
+    }
+
+    public void setCache(LinkedBlockingDeque<Message> cache) {
+        this.cache = cache;
     }
 
     @Override

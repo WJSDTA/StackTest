@@ -1,6 +1,8 @@
 package NetWorkStackDemo_02;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -16,8 +18,10 @@ public class PhyLayer implements Runnable{
     private Message message;
     private BlockingQueue<Message> low2high;
     private BlockingQueue<Message> high2low;
+    private LinkedBlockingDeque<Message> deque = new LinkedBlockingDeque<>();
     public Message s;
     public String from;
+  //  static int i = 0;
     public PhyLayer() {
     }
 
@@ -73,24 +77,38 @@ public class PhyLayer implements Runnable{
     public void setFrom(String from) {
         this.from = from;
     }
+    public void init(){
+        for(int i=0; i < 10; i++) {
+
+            if (i % 2 == 1) {
+                message = new Message("PhyLayer", "MacLayer", String.valueOf(i));
+
+                try {
+                    deque.put(message);
+                    //System.out.println(message.getInfo()+"is ok");
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // System.out.println(low2high.size());
+        }
+    }
+
     @Override
     public void run() {
+        synchronized (low2high){
+            while (!deque.isEmpty()){
 
-            for (int i = 0; i < 100; i++) {
-                synchronized (low2high){
-                if (i % 2 == 1) {
-                    message = new Message("PhyLayer", "MacLayer", String.valueOf(i));
-
-                    try {
-                        low2high.put(message);
-                        System.out.println(message.getInfo()+"is ok");
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    low2high.put(deque.take());
+                   // System.out.println(low2high.peek().getInfo());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                 // System.out.println(low2high.size());
             }
+
         }
             //int i=0;
       /*  while (true){

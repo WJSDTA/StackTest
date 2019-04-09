@@ -1,5 +1,6 @@
 package TestEcho;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -17,6 +18,7 @@ public class MacLayer implements Runnable{
     private Message message;
     private LinkedBlockingDeque<Message> queue;
     public Message s;
+    public Message s1;
     public String from;
     String Ms;
     public MacLayer() {
@@ -52,8 +54,14 @@ public class MacLayer implements Runnable{
 
     @Override
     public void run() {
+        int x =0;
         while (true){
             synchronized (queue){
+                /*Iterator<Message> iterator = queue.iterator();
+                while (iterator.hasNext()) {
+                    s1 = iterator.next();
+                    System.out.println(String.valueOf(x)+": from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                }*/
                 if (!queue.isEmpty()&&queue.getFirst()!=null){
 
 

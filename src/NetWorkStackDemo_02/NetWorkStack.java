@@ -26,6 +26,7 @@ public class NetWorkStack {
         phyLayer.setName("PhyLayer");
         macLayer.setName("MacLayer");
         netLayer.setName("NetLayer");
+        phyLayer.init();
         transportLayer.setName("TransportLayer");
         applicationLayer.setName("ApplicationLayer");
         new Thread(phyLayer).start();

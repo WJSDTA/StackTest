@@ -1,5 +1,6 @@
 package NetWorkStackDemo_02;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -18,6 +19,8 @@ public class NetLayer implements Runnable{
     private LinkedBlockingDeque<Message> low2high;
     private LinkedBlockingDeque<Message> high2low;
     public Message s;
+    public Message s1;
+    public Message ss = new Message();
     public String from;
     public NetLayer() {
     }
@@ -92,7 +95,7 @@ public class NetLayer implements Runnable{
                             Thread.sleep(1);
 
                             s =   queue.poll();
-                            System.out.println("net"+s.getInfo());
+                          //  System.out.println("net"+s.getInfo());
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -104,13 +107,19 @@ public class NetLayer implements Runnable{
                         message.setInfo(s.getInfo());
                         //  System.out.println("MAC");
                     }
-
+                    //if(!(ss.getInfo()==message.getInfo()&&ss.getFrom()==message.getFrom()&&ss.getTo()==message.getTo())){
                     try {
                         queue.put(message);
-                        System.out.println(message.getInfo()+"is ok");
+                        //System.out.println(message.getInfo()+"is ok");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
+                    }//}
+                    /*Iterator<Message> iterator = queue.descendingIterator();
+                    while (iterator.hasNext()) {
+                        s1 = iterator.next();
+                        System.out.println("from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                    }*/
+                    ss = message;
                 }
             }
 
@@ -121,8 +130,52 @@ public class NetLayer implements Runnable{
     public void run() {
         while (true){
 
-            Func(low2high,"MacLayer","TransportLayer");
+         //   Func(low2high,"MacLayer","TransportLayer");
+            synchronized (low2high){
+                if (!low2high.isEmpty()&&low2high.peek()!=null){
 
+                    try {
+                        from =low2high.peek().getTo();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if(from==this.getName()){
+                        // System.out.println("ok ?");
+
+                        if (low2high.peek().getFrom()=="MacLayer"){
+                            try {
+                                Thread.sleep(1);
+
+                                s =   low2high.poll();
+                                //  System.out.println("net"+s.getInfo());
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            message.setTo("TransportLayer");
+                            message.setFrom("NetLayer");
+                            /* message.setInfo(s.getInfo()+" from:PhyLayer to NetLayer ");*/
+                            message.setInfo(s.getInfo());
+                            //  System.out.println("MAC");
+                        }
+                        //if(!(ss.getInfo()==message.getInfo()&&ss.getFrom()==message.getFrom()&&ss.getTo()==message.getTo())){
+                        try {
+                            low2high.put(message);
+                            //System.out.println(message.getInfo()+"is ok");
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }//}
+                    /*Iterator<Message> iterator = queue.descendingIterator();
+                    while (iterator.hasNext()) {
+                        s1 = iterator.next();
+                        System.out.println("from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                    }*/
+                        ss = message;
+                    }
+                }
+
+            }
            // Func(high2low,"TransportLayer","MacLayer");
         }
     }

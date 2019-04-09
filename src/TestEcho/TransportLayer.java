@@ -54,6 +54,7 @@ public class TransportLayer implements Runnable{
         while (true){
             synchronized (queue){
                 if (!queue.isEmpty()&&queue.peek()!=null){
+
                     message = new Message();
                     try {
                         // System.out.println("TransportLayer"+queue.peek().getInfo());
@@ -73,7 +74,12 @@ public class TransportLayer implements Runnable{
                         }
 
                         if (s.getFrom()=="ApplicationLayer"){
-                            //System.out.println("s"+s.getInfo());
+                            try {
+                                Thread.sleep(2);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                           // System.out.println("s"+s.getInfo());
                             message.setTo("NetLayer");
                             message.setInfo(s.getInfo()+" from:TransportLayer to NetLayer ");
 

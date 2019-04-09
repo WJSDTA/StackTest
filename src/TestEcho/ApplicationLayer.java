@@ -1,5 +1,6 @@
 package TestEcho;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -19,6 +20,8 @@ public class ApplicationLayer implements Runnable{
     private LinkedBlockingDeque<Message> queue1=new LinkedBlockingDeque<>();
     public Message s;
     public String from;
+    public Message ss = new Message();
+    Message s1;
     public ApplicationLayer() {
     }
 
@@ -55,7 +58,7 @@ public class ApplicationLayer implements Runnable{
         while (true){
 
             synchronized (queue){
-                synchronized (queue1){
+
                     if (!queue.isEmpty()&&queue.getFirst()!=null){
 
                         try {
@@ -75,35 +78,40 @@ public class ApplicationLayer implements Runnable{
                                 e.printStackTrace();
                             }
                             if (s.getFrom()=="TransportLayer") {
+                                message = new Message();
                                 message.setFrom("ApplicationLayer");
                                 message.setTo("TransportLayer");
                                 message.setInfo("I am ApplicationLayer ,my info is:" + s.getInfo());
-                               // System.out.println(message.getInfo());
-                               // System.out.println(message.getFrom());
-                              //  System.out.println(message.getTo());
-                                if (message != null) {
+
+                                //System.out.println(ss.getInfo());
+                                if((ss.getInfo()==message.getInfo()&&ss.getFrom()==message.getFrom()&&ss.getTo()==message.getTo()))
+                                {
+
+                                    continue;
+                                   // Thread.interrupted();
+                                }
+                                else {
                                     try {
-                                        queue1.put(message);
+                                       // System.out.println("hello");
+                                        queue.put(message);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    // queue.put(message);
+                                  //
                                 }
-
+                                ss = message;
+                                /*Iterator<Message> iterator = queue.descendingIterator();
+                                while (iterator.hasNext()) {
+                                    s1 = iterator.next();
+                                    System.out.println("from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                                }*/
                               //  System.out.println(queue1.size());
                             }
 
 
-                        }
+
                     }
-                    if (!queue1.isEmpty()&&queue1.getFirst()!=null){
-                        try {
-                            queue.put(queue1.take());
-                           // System.out.println("Q1Info"+queue.getFirst().getInfo());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+
                 }
 
 

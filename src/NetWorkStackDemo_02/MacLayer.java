@@ -1,5 +1,6 @@
 package NetWorkStackDemo_02;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.Lock;
@@ -22,6 +23,8 @@ public class MacLayer implements Runnable{
     public String from;
     public String come;
     String Ms;
+    public Message ss =new Message();
+    public Message s1;
     public MacLayer() {
     }
 
@@ -81,6 +84,7 @@ public class MacLayer implements Runnable{
     public String getMs() {
         return Ms;
     }
+   static int x=0;
 
     public void setMs(String ms) {
         Ms = ms;
@@ -132,11 +136,20 @@ public class MacLayer implements Runnable{
     }
     @Override
     public void run() {
+
         while (true) {
-
+            x++;
            // Func(low2high,"PhyLayer","NetLayer");
-            synchronized (low2high){
+           if(x<=10){
+               Iterator<Message> iterator1 = low2high.iterator();
+               while (iterator1.hasNext()) {
+                   s1 = iterator1.next();
+                   System.out.println("T"+String.valueOf(x)+": from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+               }
+           }
 
+
+            synchronized (low2high){
 
                 if (!low2high.isEmpty()&&low2high.peek()!=null){
 
@@ -156,7 +169,7 @@ public class MacLayer implements Runnable{
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
+                            message = new Message();
                             message.setTo("NetLayer");
                             message.setFrom("MacLayer");
                             /* message.setInfo(s.getInfo()+" from:PhyLayer to NetLayer ");*/
@@ -164,15 +177,40 @@ public class MacLayer implements Runnable{
                             // System.out.println("MAC");
                             try {
 
-                                System.out.println("size"+low2high.size());
-                                low2high.put(message);
+                              //  System.out.println("size"+low2high.size());
+                               // System.out.println(s.getInfo());
+                              //  System.out.println("M"+message.getInfo());
+                             //   System.out.println("L"+low2high.getFirst().getInfo());
 
+                              //  if((ss.getInfo()==message.getInfo()&&ss.getFrom()==message.getFrom()&&ss.getTo()==message.getTo()))
+                                {
+                                    low2high.put(message);
+                                   /* Iterator<Message> iterator = low2high.descendingIterator();
+                                    while (iterator.hasNext()) {
+                                        s1 = iterator.next();
+                                        System.out.println("from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                                    }*/
+                                }
+                                 ss = message;
+                                  //Thread.sleep(1);
+                               /* Iterator<Message> iterator = low2high.descendingIterator();
+                                while (iterator.hasNext()) {
+                                    s1 = iterator.next();
+                                    System.out.println("from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
+                                }*/
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
 
 
+                    }
+                }
+                if(x<=10){
+                    Iterator<Message> iterator = low2high.iterator();
+                    while (iterator.hasNext()) {
+                        s1 = iterator.next();
+                        System.out.println("D"+String.valueOf(x)+": from:"+s1.getFrom()+" To:"+s1.getTo()+" Info:"+s1.getInfo());
                     }
                 }
 

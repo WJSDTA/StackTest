@@ -1,6 +1,7 @@
 package TestEcho;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * \* Created with IntelliJ IDEA.
@@ -17,6 +18,7 @@ public class PhyLayer implements Runnable {
     private BlockingQueue<Message> queue;
     public Message s;
     public String from;
+    private LinkedBlockingDeque<Message> cache;
     public PhyLayer() {
     }
 
@@ -46,6 +48,14 @@ public class PhyLayer implements Runnable {
 
     public void setQueue(BlockingQueue<Message> queue) {
         this.queue = queue;
+    }
+
+    public LinkedBlockingDeque<Message> getCache() {
+        return cache;
+    }
+
+    public void setCache(LinkedBlockingDeque<Message> cache) {
+        this.cache = cache;
     }
 
     @Override
@@ -79,23 +89,38 @@ public class PhyLayer implements Runnable {
         }*/
 
         synchronized (queue){
-        for (int i = 0; i < 50; i++) {
-            if (i % 2 == 1) {
+        for (int i = 0; i < 10; i++) {
+
                 message = new Message("PhyLayer", "MacLayer", String.valueOf(i));
-                try {
+                /*try {
                     queue.put(message);
                      //System.out.println(queue.peek().getInfo()+"is ok");
                     // Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-            }
-          //  System.out.println(queue.size());
+                }*/
+
+
         }
         }
 
         while (true){
             synchronized (queue){
+                if (!cache.isEmpty()&&cache.peek()!=null){
+                    try {
+                        message = new Message("PhyLayer", "MacLayer", cache.take().getInfo());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        queue.put(message);
+                        //System.out.println(queue.peek().getInfo()+"is ok");
+                        // Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+               // System.out.println(cache.size());
                 if (!queue.isEmpty()&&queue.peek()!=null){
 
                     try {
