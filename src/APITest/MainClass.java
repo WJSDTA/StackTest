@@ -79,7 +79,6 @@ public class MainClass implements Runnable{
     public MainClass(BlockingQueue<Message> queue) {
         this.queue = queue;
     }
-
     @Override
     public void run() {
 
